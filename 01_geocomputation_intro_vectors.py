@@ -167,3 +167,32 @@ towns_layer = gpd.GeoDataFrame(towns_data)
 towns_layer
 
 # interactive view
+towns_layer.explore(color="red", marker_kwds={"radius": 10})
+
+# spatial points can also be greated from a data frame
+towns_table = pd.DataFrame(
+    {
+        "name": ["London", "Paris"],
+        "temperature": [25, 27],
+        "date": ["2017-06-21", "2017-06-21"],
+        "x": [0.1, 2.3],
+        "y": [51.5, 48.9],
+    }
+)
+
+towns_geom = gpd.points_from_xy(towns_table["y"], towns_table["x"])
+
+towns_layer = gpd.GeoDataFrame(towns_table, geometry=towns_geom, crs=4326)
+
+# numeric properties aka geometry calculations
+
+linestring.length
+multipolygon.area
+
+# for a GeoSeries
+gpd.GeoSeries([point, linestring, polygon, multipolygon]).area
+
+## results area all planar CRS and in native units
+gdf.area
+
+gdf[gdf["name_long"] == "Slovenia"].to_crs(32633).area  # to UTM zone 33N
