@@ -37,3 +37,63 @@ src.transform
 # our data has only one layer
 src.read(1)
 # two dimensional array
+
+## Raster data from scratch
+# creating elev: 6x6 array with seq values 1:36
+elev = np.arange(1, 37, dtype=np.uint8).reshape(6, 6)
+elev
+
+# creating grain: categorical values [0,1,2] clay, stilt, sand
+
+v = [
+    1,
+    0,
+    1,
+    2,
+    2,
+    2,
+    0,
+    2,
+    0,
+    0,
+    2,
+    1,
+    0,
+    2,
+    2,
+    0,
+    0,
+    2,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    1,
+    1,
+    2,
+    1,
+    2,
+    2,
+    0,
+    2,
+]
+grain = np.array(v, dtype=np.uint8).reshape(6, 6)
+grain
+
+## ading georeferencing info origin and resolution
+
+new_transform = rasterio.transform.from_origin(
+    west=-1.5, north=1.5, xsize=0.5, ysize=0.5
+)
+new_transform
+
+#  Note that, confusingly,
+#  (i.e., ysize) is defined in rasterio.transform.from_origin using a positive value (0.5), even though it is, in fact, negative (-0.5).
+
+rasterio.plot.show(elev, transform=new_transform)
