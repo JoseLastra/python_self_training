@@ -97,3 +97,66 @@ new_transform
 #  (i.e., ysize) is defined in rasterio.transform.from_origin using a positive value (0.5), even though it is, in fact, negative (-0.5).
 
 rasterio.plot.show(elev, transform=new_transform)
+
+rasterio.plot.show(grain, transform=new_transform)
+
+## exporting a raster
+## Elevation
+# create a connection
+new_dataset = rasterio.open(
+    "output/elev.tif",
+    "w",
+    driver="GTiff",
+    height=elev.shape[0],
+    width=elev.shape[1],
+    count=1,
+    dtype=elev.dtype,
+    crs=4326,
+    transform=new_transform,
+)
+
+# write file
+new_dataset.write(elev, 1)
+
+# close connection
+new_dataset.close()
+
+## grain
+new_dataset = rasterio.open(
+    "output/grain.tif",
+    "w",
+    driver="GTiff",
+    height=grain.shape[0],
+    width=grain.shape[1],
+    count=1,
+    dtype=grain.dtype,
+    crs=4326,
+    transform=new_transform,
+)
+new_dataset.write(grain, 1)
+new_dataset.close()
+
+## CRs handling
+# for crs we use
+
+import pyproj
+
+epsg_codes = pyproj.get_codes("EPSG", "CRS")  # supported codes
+epsg_codes[:5]  # print first 5 supported codes
+
+pyproj.CRS.from_epsg(4326)  ## Printout of WGS84 CRS (EPSG:4326)
+
+## importing vector and checking crs
+import geopandas as gpd
+
+zion = gpd.read_file("data/zion.gpkg")
+zion.crs
+
+## plotting in both crs
+# WGS84
+zion.to_crs(4326).plot(edgecolor="black", color="lightgrey").grid()
+# NAD83 / UTM zone 12N
+zion.plot(edgecolor="black", color="lightgrey").grid()
+
+
+## units
